@@ -1,0 +1,56 @@
+import org.springframework.aot.gradle.dsl.AotMode
+
+plugins {
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'java'
+    id 'org.springframework.experimental.aot' version '0.12.1'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
+
+bootRun {
+    jvmArgs = ["-DspringAot=true"]
+}
+
+springAot {
+    mode = AotMode.NATIVE_AGENT
+//    debugVerify = false
+//    removeXmlSupport = true
+//    removeSpelSupport = false
+//    removeYamlSupport = false
+//    removeJmxSupport = true
+//    verify = true
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+    mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
+}
+
+dependencies {
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.2'
+    implementation "org.mybatis.spring.native:mybatis-spring-native-extensions:0.1.0-SNAPSHOT"
+    implementation 'org.postgresql:postgresql:42.2.25'
+    implementation 'com.alibaba:druid-spring-boot-starter:1.2.11'
+    implementation 'junit:junit:4.12'
+    implementation 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+tasks.named('bootBuildImage') {
+    builder = 'paketobuildpacks/builder:tiny'
+    environment = ['BP_NATIVE_IMAGE': 'true']
+}
